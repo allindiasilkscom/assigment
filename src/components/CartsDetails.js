@@ -23,7 +23,6 @@ const CartsDetails = () => {
     Rest: 800,
   };
 
-
   const handlePlaceOrder = () => {
     setIsOrderPlaced(true);
     window.alert("Order placed successfully!");
@@ -42,9 +41,44 @@ const CartsDetails = () => {
   }, [isOrderPlaced, timeLeft]);
 
   const formatTime = (seconds) => {
-    const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
-    return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
+    const preparingTime = 5 * 60; // 5 minutes in seconds
+    const packingTime = 5 * 60; // 5 minutes in seconds
+    const pickingTime = 5 * 60; // 5 minutes in seconds
+    const deliveryTime = 5 * 60; // 5 minutes in seconds
+
+    if (seconds <= preparingTime) {
+      // Preparing
+      return `Preparing: ${formatInterval(seconds, preparingTime)}`;
+    } else if (seconds <= preparingTime + packingTime) {
+      // Packing
+      return `Packing: ${formatInterval(seconds - preparingTime, packingTime)}`;
+    } else if (seconds <= preparingTime + packingTime + pickingTime) {
+      // Picking
+      return `Picking: ${formatInterval(
+        seconds - (preparingTime + packingTime),
+        pickingTime
+      )}`;
+    } else if (
+      seconds <=
+      preparingTime + packingTime + pickingTime + deliveryTime
+    ) {
+      // Delivering
+      return `Delivering: ${formatInterval(
+        seconds - (preparingTime + packingTime + pickingTime),
+        deliveryTime
+      )}`;
+    } else {
+      return "Order Delivered";
+    }
+  };
+
+  const formatInterval = (elapsedSeconds, totalSeconds) => {
+    const remainingSeconds = totalSeconds - elapsedSeconds;
+    const minutes = Math.floor(remainingSeconds / 60);
+    const remainingSecondsWithinMinute = remainingSeconds % 60;
+    return `${minutes}:${
+      remainingSecondsWithinMinute < 10 ? "0" : ""
+    }${remainingSecondsWithinMinute}`;
   };
 
   return (
@@ -54,7 +88,10 @@ const CartsDetails = () => {
         <section className="container mt-3">
           <div className="itemsdetails d-flex">
             <div className="items_img">
-              <img src="https://b.zmtcdn.com/data/pictures/9/18857339/8f53919f1175c08cf0f0371b73704f9b_o2_featured_v2.jpg" alt="Item" />
+              <img
+                src="https://b.zmtcdn.com/data/pictures/9/18857339/8f53919f1175c08cf0f0371b73704f9b_o2_featured_v2.jpg"
+                alt="Item"
+              />
             </div>
             <div className="details">
               <Table>
@@ -70,7 +107,8 @@ const CartsDetails = () => {
                       <strong>Dishes</strong> : Masala Theoryy
                     </p>
                     <p>
-                      <strong>Total</strong> : {priceMap[selectedSize] * quantity}
+                      <strong>Total</strong> :{" "}
+                      {priceMap[selectedSize] * quantity}
                     </p>
                     <p>
                       <strong>Size</strong> :
@@ -90,10 +128,24 @@ const CartsDetails = () => {
                       />
                     </p>
                     <p>
-                      <strong>Remove</strong> : <span><i className="fas fa-trash" style={{ color: "red", fontSize: 20, cursor: 'pointer' }}></i></span>
+                      <strong>Remove</strong> :{" "}
+                      <span>
+                        <i
+                          className="fas fa-trash"
+                          style={{
+                            color: "red",
+                            fontSize: 20,
+                            cursor: "pointer",
+                          }}
+                        ></i>
+                      </span>
                     </p>
                     <button
-                      style={{ background: "green", borderRadius: "25%", color: "white" }}
+                      style={{
+                        background: "green",
+                        borderRadius: "25%",
+                        color: "white",
+                      }}
                       onClick={handlePlaceOrder}
                       disabled={isOrderPlaced}
                     >
